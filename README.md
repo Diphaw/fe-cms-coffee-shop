@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Coffee Shop CMS - Frontend Client
 
-## Getting Started
+Frontend client untuk dashboard pengelolaan Coffee Shop, dibangun dengan **Next.js (App Router)** dan **TypeScript**.
 
-First, run the development server:
+## 🚀 Fitur Utama
+*   **Point-of-Sale (POS) Takeaway**: Pembuatan pesanan bawa pulang dengan antarmuka pencarian cepat dan keranjang interaktif.
+*   **Real-time Monitoring**: Sinkronisasi status pesanan dan persiapan dapur secara real-time.
+*   **Table & Dine-in Management**: Pemantauan status meja makan pelanggan.
+*   **Menu Inventory Management**: Pengelolaan data menu, stok, harga, dan ketersediaan.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Tech Stack
+*   Next.js (App Router)
+*   TypeScript
+*   Tailwind CSS & Shadcn UI
+*   TanStack Query (React Query) & Axios
+*   Pusher Client
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚙️ Cara Menjalankan Project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  **Instalasi Dependensi**:
+    ```bash
+    npm install
+    ```
+2.  **Menjalankan Mode Pengembangan**:
+    ```bash
+    npm run dev -- -p 3001
+    ```
+3.  **Linter & Formatter Check**:
+    ```bash
+    npm run lint
+    npm run format:check
+    ```
