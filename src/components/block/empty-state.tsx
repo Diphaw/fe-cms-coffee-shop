@@ -22,26 +22,28 @@ type Props = {
  */
 export function EmptyState({ icon: Icon = InboxIcon, title, subtitle, action }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 py-16 px-6 text-center bg-card rounded-xl border border-border border-dashed">
-      <div className="w-14 h-14 rounded-full bg-accent/40 flex items-center justify-center text-muted-foreground">
-        <Icon className="w-6 h-6 stroke-[1.75]" />
-      </div>
-      <div className="space-y-1.5">
-        <p className="text-foreground text-sm font-semibold">{title}</p>
-        {subtitle && (
-          <p className="text-muted-foreground text-xs max-w-[300px] leading-relaxed mx-auto">
-            {subtitle}
-          </p>
+    <div className="flex h-[550px] w-full flex-col items-center justify-center rounded-xl bg-card p-4 shadow border border-border">
+      <div className="flex h-full w-full flex-col items-center justify-center rounded-lg border border-border border-dashed gap-4 p-6 text-center">
+        <div className="w-14 h-14 rounded-full bg-accent/40 flex items-center justify-center text-muted-foreground">
+          <Icon className="w-6 h-6 stroke-[1.75]" />
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-foreground text-sm font-semibold">{title}</p>
+          {subtitle && (
+            <p className="text-muted-foreground text-xs max-w-[300px] leading-relaxed mx-auto">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        {action && (
+          <button
+            onClick={action.onClick}
+            className="mt-1 px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/90 transition-all cursor-pointer shadow-sm"
+          >
+            {action.label}
+          </button>
         )}
       </div>
-      {action && (
-        <button
-          onClick={action.onClick}
-          className="mt-1 px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/90 transition-all cursor-pointer shadow-sm"
-        >
-          {action.label}
-        </button>
-      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import LayoutClient from "./layout.client";
+import { AlertProvider } from "@/components/block";
 import "./globals.css";
 
 const geist = Geist({
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="id" className={`dark ${geist.variable} h-full`} style={{ colorScheme: "dark" }}>
       <body className="min-h-full bg-background text-foreground antialiased flex flex-col font-sans">
-        <LayoutClient>{children}</LayoutClient>
+        <AlertProvider>
+          <LayoutClient>{children}</LayoutClient>
+        </AlertProvider>
       </body>
     </html>
   );

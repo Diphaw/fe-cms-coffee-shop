@@ -167,12 +167,12 @@ export default function DataTable<TData, TValue>({
   return (
     <div
       className={cn(
-        "flex w-full max-w-full min-w-0 flex-col rounded-xl bg-card border border-border shadow",
+        "flex w-full max-w-full min-w-0 flex-col rounded-xl bg-card border border-border shadow min-h-[550px]",
         className
       )}
     >
       <div
-        className="overflow-x-auto"
+        className="overflow-x-auto flex-1"
         style={maxHeight ? { maxHeight: `${maxHeight}px`, overflowY: "auto" } : undefined}
       >
         <Table className="w-max min-w-full table-fixed">

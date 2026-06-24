@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
 import { Coffee, Table2, ClipboardList, DollarSign, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { EmptyState } from "@/components/block";
+import { EmptyState, TitleActions } from "@/components/block";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardContent() {
@@ -37,7 +37,7 @@ export default function DashboardContent() {
   const recentOrders = orders.slice(0, 5);
 
   const pendingOrdersCount = orders.filter(
-    (o) => o.status === "PENDING" || o.status === "CONFIRMED" || o.status === "PREPARING"
+    (o) => o.status === "PENDING" || o.status === "PREPARING"
   ).length;
 
   const todayRevenue = orders
@@ -78,14 +78,10 @@ export default function DashboardContent() {
   return (
     <div className="space-y-8 font-sans">
       {/* Title */}
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-          Dashboard Ringkasan
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Pantau status kedai kopi Anda secara real-time dari satu tempat.
-        </p>
-      </div>
+      <TitleActions
+        title="Dashboard Ringkasan"
+        description="Pantau status kedai kopi Anda secara real-time dari satu tempat."
+      />
 
       {/* Grid Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

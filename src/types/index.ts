@@ -64,14 +64,7 @@ export type Table = {
 
 // ─── Order ────────────────────────────────────────────────────────────────────
 
-export type OrderStatus =
-  | "PENDING"
-  | "CONFIRMED"
-  | "PREPARING"
-  | "READY"
-  | "SERVED"
-  | "COMPLETED"
-  | "CANCELLED";
+export type OrderStatus = "PENDING" | "PREPARING" | "READY" | "COMPLETED" | "CANCELLED";
 
 export type PaymentStatus = "UNPAID" | "PAID" | "REFUNDED";
 

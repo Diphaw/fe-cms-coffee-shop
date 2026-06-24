@@ -25,7 +25,7 @@ export function ErrorModal({
   title,
   description,
   autoClose = true,
-  autoCloseDuration = 3000,
+  autoCloseDuration = 2000,
 }: ErrorModalProps) {
   const [progress, setProgress] = useState(100);
 
@@ -60,7 +60,10 @@ export function ErrorModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="bg-card border-border sm:max-w-[380px] text-center overflow-hidden">
+      <DialogContent
+        showCloseButton={false}
+        className="bg-card border-border sm:max-w-[380px] text-center overflow-hidden"
+      >
         <DialogHeader className="items-center gap-4 pt-4 pb-4">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full ring-4 ring-destructive/20 bg-destructive/10">
             <XCircle className="w-8 h-8 text-destructive" strokeWidth={1.75} />

@@ -55,11 +55,9 @@ export function TableStatusBadge({ status }: { status: TableStatus }) {
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   const map: Record<OrderStatus, { variant: BadgeVariant; label: string }> = {
     PENDING: { variant: "yellow", label: "Menunggu" },
-    CONFIRMED: { variant: "blue", label: "Dikonfirmasi" },
     PREPARING: { variant: "gold", label: "Diproses" },
     READY: { variant: "green", label: "Siap" },
-    SERVED: { variant: "green", label: "Disajikan" },
-    COMPLETED: { variant: "gray", label: "Selesai" },
+    COMPLETED: { variant: "green", label: "Selesai" },
     CANCELLED: { variant: "red", label: "Dibatalkan" },
   };
   const { variant, label } = map[status];

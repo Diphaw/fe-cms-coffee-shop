@@ -12,13 +12,7 @@ import { MenuItemDialog } from "./components/MenuItemDialog";
 import { getColumns } from "./column";
 import type { MenuFormValues } from "./schema";
 import { CATEGORIES, CATEGORY_LABELS } from "./constants";
-import {
-  SuccessModal,
-  ErrorModal,
-  ConfirmDeleteModal,
-  EmptyState,
-  DataTable,
-} from "@/components/block";
+import { ConfirmDeleteModal, EmptyState, DataTable, alert, TitleActions } from "@/components/block";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,34 +27,18 @@ export default function MenuItemsContent() {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  const [feedback, setFeedback] = useState<{
-    open: boolean;
-    variant: "success" | "error";
-    title: string;
-    description?: string;
-  }>({
-    open: false,
-    variant: "success",
-    title: "",
-    description: "",
-  });
-
   const { data: menuListResponse, isLoading, error } = useGetMenuList();
 
   const createMenuMutation = useCreateMenu({
     onSuccess: (res) => {
       setDialogOpen(false);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Menu berhasil ditambahkan!",
         description: `"${res.data.name}" siap ditampilkan di daftar menu.`,
       });
     },
     onError: (err) => {
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal menyimpan menu",
         description: getErrorMessage(err, "Gagal menyimpan menu."),
       });
@@ -70,17 +48,13 @@ export default function MenuItemsContent() {
   const updateMenuMutation = useUpdateMenu({
     onSuccess: (res) => {
       setDialogOpen(false);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Menu berhasil diperbarui!",
         description: `"${res.data.name}" telah disimpan ke database.`,
       });
     },
     onError: (err) => {
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal memperbarui menu",
         description: getErrorMessage(err, "Gagal memperbarui menu."),
       });
@@ -90,18 +64,14 @@ export default function MenuItemsContent() {
   const deleteMenuMutation = useDeleteMenu({
     onSuccess: () => {
       setDeleteConfirmId(null);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Menu berhasil dihapus!",
         description: "Item telah dihapus dari daftar menu.",
       });
     },
     onError: (err) => {
       setDeleteConfirmId(null);
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal menghapus menu",
         description: getErrorMessage(err, "Gagal menghapus menu."),
       });
@@ -110,9 +80,7 @@ export default function MenuItemsContent() {
 
   const toggleMenuMutation = useToggleMenu({
     onError: (err) => {
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal mengubah status",
         description: getErrorMessage(err, "Gagal mengganti status ketersediaan."),
       });
@@ -181,23 +149,19 @@ export default function MenuItemsContent() {
   return (
     <div className="space-y-8 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+      <TitleActions
+        title={
+          <span className="flex items-center gap-2">
             <Coffee className="w-8 h-8 text-[#c8a96e]" /> Kelola Menu Cafe
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Tambah hidangan baru, atur ketersediaan menu, sesuaikan harga, deskripsi, dan pantau
-            stok.
-          </p>
-        </div>
-        <Button
-          onClick={openAddDialog}
-          className="font-bold cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Tambah Menu
-        </Button>
-      </div>
+          </span>
+        }
+        description="Tambah hidangan baru, atur ketersediaan menu, sesuaikan harga, deskripsi, dan pantau stok."
+        actions={
+          <Button onClick={openAddDialog} className="font-bold cursor-pointer">
+            <Plus className="w-4 h-4 mr-2" /> Tambah Menu
+          </Button>
+        }
+      />
 
       {/* Control Panel */}
       <Card className="border-border bg-card">
@@ -280,20 +244,6 @@ export default function MenuItemsContent() {
         loading={deleteMenuMutation.isPending}
         title="Hapus Menu Ini?"
         description="Item menu akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
-      />
-
-      {/* Modal: Success / Error Feedback */}
-      <SuccessModal
-        open={feedback.open && feedback.variant === "success"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
-      />
-      <ErrorModal
-        open={feedback.open && feedback.variant === "error"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
       />
     </div>
   );

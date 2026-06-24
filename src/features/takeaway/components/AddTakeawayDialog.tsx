@@ -10,7 +10,7 @@ import { getErrorMessage } from "@/utils/error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SuccessModal, ErrorModal } from "@/components/block";
+import { alert } from "@/components/block";
 import {
   Dialog,
   DialogContent,
@@ -28,18 +28,6 @@ export function AddTakeawayDialog({ open, onOpenChange, onSuccess }: AddTakeaway
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const [feedback, setFeedback] = useState<{
-    open: boolean;
-    variant: "success" | "error";
-    title: string;
-    description?: string;
-  }>({
-    open: false,
-    variant: "success",
-    title: "",
-    description: "",
-  });
 
   const {
     register,
@@ -84,9 +72,7 @@ export function AddTakeawayDialog({ open, onOpenChange, onSuccess }: AddTakeaway
 
   const createTakeawayMutation = useCreateTakeaway({
     onSuccess: () => {
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Pesanan Takeaway berhasil dibuat!",
         description: "Pelanggan dapat menunggu persiapan selesai.",
       });
@@ -498,19 +484,6 @@ export function AddTakeawayDialog({ open, onOpenChange, onSuccess }: AddTakeaway
           </form>
         </DialogContent>
       </Dialog>
-
-      <SuccessModal
-        open={feedback.open && feedback.variant === "success"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
-      />
-      <ErrorModal
-        open={feedback.open && feedback.variant === "error"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
-      />
     </>
   );
 }

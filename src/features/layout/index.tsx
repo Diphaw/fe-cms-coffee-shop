@@ -32,7 +32,7 @@ export default function CMSLayoutContent({ children }: { children: React.ReactNo
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />
       <main className="flex-1 overflow-y-auto p-8">
-        <div className="max-w-6xl mx-auto space-y-8">{children}</div>
+        <div className="w-full space-y-8">{children}</div>
       </main>
     </div>
   );

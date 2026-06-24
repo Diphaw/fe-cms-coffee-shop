@@ -7,15 +7,15 @@ import {
   useUpdateTable,
   useDeleteTable,
 } from "@/api/domains/tables/query";
-import { TableCard } from "./components/TableCard";
 import { TableDialog } from "./components/TableDialog";
-import { SuccessModal, ErrorModal, ConfirmDeleteModal, EmptyState } from "@/components/block";
+import { TableDetailDialog } from "./components/TableDetailDialog";
+import { getColumns } from "./column";
+import { ConfirmDeleteModal, EmptyState, DataTable, alert, TitleActions } from "@/components/block";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Table2 } from "lucide-react";
+import { Plus, Table2, Loader2 } from "lucide-react";
 import type { Table } from "@/types";
 import { getErrorMessage } from "@/utils/error";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import type { TableFormValues } from "./schema";
 
@@ -23,35 +23,20 @@ export default function TablesContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<Table | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [detailTable, setDetailTable] = useState<Table | null>(null);
 
-  const [feedback, setFeedback] = useState<{
-    open: boolean;
-    variant: "success" | "error";
-    title: string;
-    description?: string;
-  }>({
-    open: false,
-    variant: "success",
-    title: "",
-    description: "",
-  });
-
-  const { data: tableListResponse, isLoading, error } = useGetTableList();
+  const { data: tableListResponse, isLoading } = useGetTableList();
 
   const createTableMutation = useCreateTable({
     onSuccess: (res) => {
       setDialogOpen(false);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Meja berhasil ditambahkan!",
         description: `Meja nomor ${res.data.number} siap digunakan.`,
       });
     },
     onError: (err) => {
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal menyimpan meja",
         description: getErrorMessage(err, "Gagal menyimpan meja."),
       });
@@ -61,17 +46,13 @@ export default function TablesContent() {
   const updateTableMutation = useUpdateTable({
     onSuccess: (res) => {
       setDialogOpen(false);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Meja berhasil diperbarui!",
         description: `Meja nomor ${res.data.number} telah disimpan.`,
       });
     },
     onError: (err) => {
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal memperbarui meja",
         description: getErrorMessage(err, "Gagal memperbarui meja."),
       });
@@ -81,18 +62,14 @@ export default function TablesContent() {
   const deleteTableMutation = useDeleteTable({
     onSuccess: () => {
       setDeleteConfirmId(null);
-      setFeedback({
-        open: true,
-        variant: "success",
+      alert.success({
         title: "Meja berhasil dihapus!",
         description: "Data meja telah dihapus dari sistem.",
       });
     },
     onError: (err) => {
       setDeleteConfirmId(null);
-      setFeedback({
-        open: true,
-        variant: "error",
+      alert.error({
         title: "Gagal menghapus meja",
         description: getErrorMessage(err, "Gagal menghapus meja."),
       });
@@ -111,7 +88,8 @@ export default function TablesContent() {
 
   const handleSubmit = (values: TableFormValues) => {
     const num = parseInt(values.number, 10);
-    const cap = parseInt(values.capacity, 10);
+    const textCap = values.capacity ? values.capacity.toString() : "0";
+    const cap = parseInt(textCap, 10);
 
     if (editingTable) {
       updateTableMutation.mutate({
@@ -207,60 +185,29 @@ export default function TablesContent() {
     win.document.close();
   };
 
-  if (error) {
-    return (
-      <EmptyState
-        icon={Table2}
-        title="Gagal memuat data meja"
-        subtitle="Terjadi kesalahan saat mengambil data. Coba muat ulang halaman."
-      />
-    );
-  }
-
   const tables = tableListResponse?.data ?? [];
 
   return (
     <div className="space-y-8 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+      <TitleActions
+        title={
+          <span className="flex items-center gap-2">
             <Table2 className="w-8 h-8 text-[#c8a96e]" /> Kelola Meja Cafe
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Lihat, tambah, ubah detail meja, serta cetak QR Code unik untuk setiap meja pelanggan.
-          </p>
-        </div>
-        <Button
-          onClick={openAddDialog}
-          className="font-bold cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Tambah Meja
-        </Button>
-      </div>
+          </span>
+        }
+        description="Lihat, tambah, ubah detail meja, serta cetak QR Code unik untuk setiap meja pelanggan."
+        actions={
+          <Button onClick={openAddDialog} className="font-bold cursor-pointer">
+            <Plus className="w-4 h-4 mr-2" /> Tambah Meja
+          </Button>
+        }
+      />
 
-      {/* Grid Meja */}
+      {/* Tabel Meja */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, idx) => (
-            <Card
-              key={`table-skeleton-${idx}`}
-              className="border-border bg-card overflow-hidden shadow-sm"
-            >
-              <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border">
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-24" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-                <Skeleton className="h-6 w-16 rounded-full" />
-              </CardHeader>
-              <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
-                <Skeleton className="size-[150px] rounded-xl animate-pulse bg-accent" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-8 w-full" />
-              </CardContent>
-            </Card>
-          ))}
+        <div className="flex h-60 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#c8a96e]" />
         </div>
       ) : tables.length === 0 ? (
         <EmptyState
@@ -269,17 +216,22 @@ export default function TablesContent() {
           subtitle="Tambahkan meja baru melalui tombol di bagian kanan atas halaman."
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tables.map((table) => (
-            <TableCard
-              key={table.id}
-              table={table}
-              onEdit={openEditDialog}
-              onDelete={(id) => setDeleteConfirmId(id)}
-              onPrint={handlePrint}
+        <Card className="border-border bg-card">
+          <CardContent className="p-0">
+            <DataTable
+              columns={getColumns({
+                onEdit: openEditDialog,
+                onDelete: (id) => setDeleteConfirmId(id),
+                onPrint: handlePrint,
+                onViewDetail: (table) => setDetailTable(table),
+              })}
+              data={tables}
+              loading={isLoading}
+              hidePagination
+              className="shadow-none border-none bg-transparent rounded-none"
             />
-          ))}
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Dialog: Add / Edit Meja */}
@@ -301,18 +253,11 @@ export default function TablesContent() {
         description="Data meja beserta QR Code-nya akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
       />
 
-      {/* Modal: Success / Error Feedback */}
-      <SuccessModal
-        open={feedback.open && feedback.variant === "success"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
-      />
-      <ErrorModal
-        open={feedback.open && feedback.variant === "error"}
-        onClose={() => setFeedback((prev) => ({ ...prev, open: false }))}
-        title={feedback.title}
-        description={feedback.description}
+      {/* Dialog Detail Meja */}
+      <TableDetailDialog
+        table={detailTable}
+        open={detailTable !== null}
+        onOpenChange={(open) => !open && setDetailTable(null)}
       />
     </div>
   );
