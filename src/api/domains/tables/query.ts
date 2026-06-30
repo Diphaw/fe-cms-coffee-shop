@@ -9,6 +9,7 @@ import { createKey } from "@/api/configs/keys";
 import { ApiError } from "@/api/configs/types";
 import { tablesService } from "./service";
 import {
+  GetTableListRequest,
   GetTableListResponse,
   GetTableDetailRequest,
   GetTableDetailResponse,
@@ -23,11 +24,12 @@ import {
 export const tableKeys = createKey("tables");
 
 export const useGetTableList = (
+  request?: GetTableListRequest,
   options?: Partial<UseQueryOptions<GetTableListResponse, ApiError>>
 ) => {
   return useQuery({
-    queryKey: tableKeys.list(),
-    queryFn: () => tablesService.getTableList(),
+    queryKey: tableKeys.list(request?.params),
+    queryFn: () => tablesService.getTableList(request),
     ...options,
   });
 };
