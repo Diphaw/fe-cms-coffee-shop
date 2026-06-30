@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { auth } from "@/lib/auth";
+import Cookies from "js-cookie";
 import { useLogin } from "@/api/domains/auth/query";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,14 +31,14 @@ export default function LoginPageContent() {
 
   // If already authenticated, redirect directly to dashboard
   useEffect(() => {
-    if (auth.isAuthenticated()) {
+    if (Cookies.get("cms_token")) {
       router.push("/dashboard");
     }
   }, [router]);
 
   const loginMutation = useLogin({
     onSuccess: (res) => {
-      auth.setToken(res.data.token);
+      Cookies.set("cms_token", res.data.token, { expires: 7 });
       router.push("/dashboard");
     },
     onError: (err) => {

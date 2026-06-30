@@ -1,5 +1,6 @@
 import { baseApi } from "@/api/configs/url";
 import {
+  GetTableListRequest,
   GetTableListResponse,
   GetTableDetailRequest,
   GetTableDetailResponse,
@@ -12,8 +13,8 @@ import {
 } from "./types";
 
 class TablesService {
-  async getTableList(): Promise<GetTableListResponse> {
-    return await baseApi.get("/tables");
+  async getTableList(request?: GetTableListRequest): Promise<GetTableListResponse> {
+    return await baseApi.get("/tables", { params: request?.params });
   }
 
   async getTableDetail(request: GetTableDetailRequest): Promise<GetTableDetailResponse> {

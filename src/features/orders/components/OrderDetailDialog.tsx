@@ -11,10 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
 import { Clock, Calendar, MessageSquare, Receipt, Coffee, ShoppingBag } from "lucide-react";
-import type { Order } from "@/types";
+import type { OrderData } from "@/api/domains/orders/types";
 
 interface OrderDetailDialogProps {
-  order: Order | null;
+  order: OrderData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

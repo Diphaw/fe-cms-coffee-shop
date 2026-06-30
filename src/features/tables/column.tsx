@@ -5,13 +5,13 @@ import QRCode from "react-qr-code";
 import { TableStatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash, Printer, Eye } from "lucide-react";
-import type { Table } from "@/types";
+import type { TableData } from "@/api/domains/tables/types";
 
 interface GetColumnsProps {
-  onEdit: (table: Table) => void;
+  onEdit: (table: TableData) => void;
   onDelete: (id: string) => void;
-  onPrint: (table: Table) => void;
-  onViewDetail: (table: Table) => void;
+  onPrint: (table: TableData) => void;
+  onViewDetail: (table: TableData) => void;
 }
 
 export function getColumns({
@@ -19,7 +19,7 @@ export function getColumns({
   onDelete,
   onPrint,
   onViewDetail,
-}: GetColumnsProps): ColumnDef<Table>[] {
+}: GetColumnsProps): ColumnDef<TableData>[] {
   return [
     {
       id: "number",

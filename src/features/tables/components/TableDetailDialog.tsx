@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import { TableStatusBadge } from "@/components/ui/badge";
 import { Table2, Users } from "lucide-react";
 import QRCode from "react-qr-code";
-import type { Table } from "@/types";
+import type { TableData } from "@/api/domains/tables/types";
 
 interface TableDetailDialogProps {
-  table: Table | null;
+  table: TableData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

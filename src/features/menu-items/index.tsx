@@ -11,27 +11,48 @@ import {
 import { MenuItemDialog } from "./components/MenuItemDialog";
 import { getColumns } from "./column";
 import type { MenuFormValues } from "./schema";
-import { CATEGORIES, CATEGORY_LABELS } from "./constants";
+import {
+  CATEGORIES,
+  CATEGORY_LABELS,
+  DEFAULT_PAGINATION,
+  DEFAULT_FILTER,
+  DEFAULT_MODAL_FORM,
+  DEFAULT_MODAL_DELETE,
+} from "./constants";
 import { ConfirmDeleteModal, EmptyState, DataTable, alert, TitleActions } from "@/components/block";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Coffee } from "lucide-react";
-import type { MenuItem, MenuCategory } from "@/types";
+import type { MenuItemData, MenuCategory } from "@/api/domains/menu/types";
+import type { PaginationState, FilterState, ModalFormState, ModalDeleteState } from "./types";
 import { getErrorMessage } from "@/utils/error";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function MenuItemsContent() {
-  const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string>("ALL");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationState>(DEFAULT_PAGINATION);
+  const [filter, setFilter] = useState<FilterState>(DEFAULT_FILTER);
+  const [modalForm, setModalForm] = useState<ModalFormState>(DEFAULT_MODAL_FORM);
+  const [modalDelete, setModalDelete] = useState<ModalDeleteState>(DEFAULT_MODAL_DELETE);
 
-  const { data: menuListResponse, isLoading, error } = useGetMenuList();
+  const debouncedSearch = useDebounce(filter.search, 500);
+
+  const {
+    data: menuListResponse,
+    isLoading,
+    error,
+  } = useGetMenuList({
+    params: {
+      page: pagination.page,
+      limit: pagination.limit,
+      search: debouncedSearch || undefined,
+      category: filter.category === "ALL" ? undefined : filter.category,
+    },
+  });
 
   const createMenuMutation = useCreateMenu({
     onSuccess: (res) => {
-      setDialogOpen(false);
+      setModalForm(DEFAULT_MODAL_FORM);
       alert.success({
         title: "Menu berhasil ditambahkan!",
         description: `"${res.data.name}" siap ditampilkan di daftar menu.`,
@@ -47,7 +68,7 @@ export default function MenuItemsContent() {
 
   const updateMenuMutation = useUpdateMenu({
     onSuccess: (res) => {
-      setDialogOpen(false);
+      setModalForm(DEFAULT_MODAL_FORM);
       alert.success({
         title: "Menu berhasil diperbarui!",
         description: `"${res.data.name}" telah disimpan ke database.`,
@@ -63,14 +84,14 @@ export default function MenuItemsContent() {
 
   const deleteMenuMutation = useDeleteMenu({
     onSuccess: () => {
-      setDeleteConfirmId(null);
+      setModalDelete(DEFAULT_MODAL_DELETE);
       alert.success({
         title: "Menu berhasil dihapus!",
         description: "Item telah dihapus dari daftar menu.",
       });
     },
     onError: (err) => {
-      setDeleteConfirmId(null);
+      setModalDelete(DEFAULT_MODAL_DELETE);
       alert.error({
         title: "Gagal menghapus menu",
         description: getErrorMessage(err, "Gagal menghapus menu."),
@@ -88,14 +109,16 @@ export default function MenuItemsContent() {
   });
 
   const openAddDialog = () => {
-    setEditingItem(null);
-    setDialogOpen(true);
+    setModalForm({ open: true, type: "add", id: null });
   };
 
-  const openEditDialog = (item: MenuItem) => {
-    setEditingItem(item);
-    setDialogOpen(true);
+  const openEditDialog = (item: MenuItemData) => {
+    setModalForm({ open: true, type: "edit", id: item.id });
   };
+
+  const items = menuListResponse?.data ?? [];
+  const total = menuListResponse?.meta?.total ?? 0;
+  const editingItem = modalForm.id ? items.find((item) => item.id === modalForm.id) || null : null;
 
   const handleSubmit = (values: MenuFormValues) => {
     const price = parseFloat(values.price);
@@ -119,8 +142,8 @@ export default function MenuItemsContent() {
   };
 
   const confirmDelete = () => {
-    if (!deleteConfirmId) return;
-    deleteMenuMutation.mutate({ path: { id: deleteConfirmId } });
+    if (!modalDelete.id) return;
+    deleteMenuMutation.mutate({ path: { id: modalDelete.id } });
   };
 
   const handleToggle = (id: string) => {
@@ -136,15 +159,6 @@ export default function MenuItemsContent() {
       />
     );
   }
-
-  const items = menuListResponse?.data ?? [];
-  const filteredItems = items.filter((item) => {
-    const matchSearch =
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      (item.description?.toLowerCase() ?? "").includes(search.toLowerCase());
-    const matchCat = activeCategory === "ALL" || item.category === activeCategory;
-    return matchSearch && matchCat;
-  });
 
   return (
     <div className="space-y-8 font-sans">
@@ -170,8 +184,11 @@ export default function MenuItemsContent() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={filter.search}
+              onChange={(e) => {
+                setFilter((prev) => ({ ...prev, search: e.target.value }));
+                setPagination((prev) => ({ ...prev, page: 1 }));
+              }}
               placeholder="Cari nama menu atau deskripsi..."
               className="pl-10 bg-background border-border"
             />
@@ -180,9 +197,12 @@ export default function MenuItemsContent() {
           {/* Category Filter Tabs */}
           <div className="flex flex-wrap gap-2">
             <Button
-              variant={activeCategory === "ALL" ? "default" : "outline"}
+              variant={filter.category === "ALL" ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveCategory("ALL")}
+              onClick={() => {
+                setFilter((prev) => ({ ...prev, category: "ALL" }));
+                setPagination((prev) => ({ ...prev, page: 1 }));
+              }}
               className="cursor-pointer"
             >
               Semua
@@ -190,9 +210,12 @@ export default function MenuItemsContent() {
             {CATEGORIES.map((c) => (
               <Button
                 key={c}
-                variant={activeCategory === c ? "default" : "outline"}
+                variant={filter.category === c ? "default" : "outline"}
                 size="sm"
-                onClick={() => setActiveCategory(c)}
+                onClick={() => {
+                  setFilter((prev) => ({ ...prev, category: c }));
+                  setPagination((prev) => ({ ...prev, page: 1 }));
+                }}
                 className="cursor-pointer"
               >
                 {CATEGORY_LABELS[c]}
@@ -203,7 +226,7 @@ export default function MenuItemsContent() {
       </Card>
 
       {/* Menu List Table */}
-      {!isLoading && filteredItems.length === 0 ? (
+      {!isLoading && items.length === 0 ? (
         <EmptyState
           icon={Coffee}
           title="Menu tidak ditemukan"
@@ -215,12 +238,14 @@ export default function MenuItemsContent() {
             <DataTable
               columns={getColumns({
                 onEdit: openEditDialog,
-                onDelete: (id) => setDeleteConfirmId(id),
+                onDelete: (id) => setModalDelete({ open: true, id }),
                 onToggle: handleToggle,
               })}
-              data={filteredItems}
+              data={items}
               loading={isLoading}
-              hidePagination
+              total={total}
+              pagination={pagination}
+              setPagination={setPagination}
               className="shadow-none border-none bg-transparent rounded-none"
             />
           </CardContent>
@@ -229,8 +254,8 @@ export default function MenuItemsContent() {
 
       {/* Dialog: Add / Edit Menu */}
       <MenuItemDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={modalForm.open}
+        onOpenChange={(open) => !open && setModalForm(DEFAULT_MODAL_FORM)}
         editingItem={editingItem}
         onSubmit={handleSubmit}
         submitting={createMenuMutation.isPending || updateMenuMutation.isPending}
@@ -238,9 +263,9 @@ export default function MenuItemsContent() {
 
       {/* Modal: Confirm Delete */}
       <ConfirmDeleteModal
-        open={deleteConfirmId !== null}
+        open={modalDelete.open}
         onConfirm={confirmDelete}
-        onCancel={() => setDeleteConfirmId(null)}
+        onCancel={() => setModalDelete(DEFAULT_MODAL_DELETE)}
         loading={deleteMenuMutation.isPending}
         title="Hapus Menu Ini?"
         description="Item menu akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."

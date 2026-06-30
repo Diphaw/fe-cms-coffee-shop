@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/auth";
+import Cookies from "js-cookie";
 import { Sidebar } from "./components/Sidebar";
 import { PageLoader } from "@/components/ui/spinner";
 
@@ -13,7 +13,7 @@ export default function CMSLayoutContent({ children }: { children: React.ReactNo
 
   useEffect(() => {
     setMounted(true);
-    if (!auth.isAuthenticated()) {
+    if (!Cookies.get("cms_token")) {
       router.push("/login");
     } else {
       setAuthenticated(true);

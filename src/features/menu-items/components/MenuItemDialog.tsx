@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { CATEGORIES, CATEGORY_LABELS, DEFAULT_FORM } from "../constants";
+import { CATEGORIES, CATEGORY_LABELS, DEFAULT_FORM_VALUES } from "../constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,7 +44,7 @@ export function MenuItemDialog({
     formState: { errors },
   } = useForm<MenuFormValues>({
     resolver: zodResolver(menuSchema),
-    defaultValues: DEFAULT_FORM,
+    defaultValues: DEFAULT_FORM_VALUES,
   });
 
   // Reset form when dialog opens or editingItem changes

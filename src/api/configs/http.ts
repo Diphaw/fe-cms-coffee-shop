@@ -1,5 +1,6 @@
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export class Http {
   private api: AxiosInstance;
@@ -23,7 +24,7 @@ export class Http {
      * ===== REQUEST INTERCEPTOR =====
      */
     this.api.interceptors.request.use((config) => {
-      const accessToken = typeof window !== "undefined" ? localStorage.getItem("cms_token") : null;
+      const accessToken = Cookies.get("cms_token");
 
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
@@ -39,10 +40,8 @@ export class Http {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("cms_token");
-            window.location.href = "/login";
-          }
+          Cookies.remove("cms_token");
+          window.location.href = "/login";
         }
 
         return Promise.reject(error.response?.data || error);

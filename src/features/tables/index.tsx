@@ -14,18 +14,26 @@ import { ConfirmDeleteModal, EmptyState, DataTable, alert, TitleActions } from "
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Table2, Loader2 } from "lucide-react";
-import type { Table } from "@/types";
+import type { TableData } from "@/api/domains/tables/types";
 import { getErrorMessage } from "@/utils/error";
 
 import type { TableFormValues } from "./schema";
+import { PaginationState } from "./types";
+import { DEFAULT_PAGINATION } from "./constants";
 
 export default function TablesContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTable, setEditingTable] = useState<Table | null>(null);
+  const [editingTable, setEditingTable] = useState<TableData | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [detailTable, setDetailTable] = useState<Table | null>(null);
+  const [detailTable, setDetailTable] = useState<TableData | null>(null);
+  const [pagination, setPagination] = useState<PaginationState>(DEFAULT_PAGINATION);
 
-  const { data: tableListResponse, isLoading } = useGetTableList();
+  const { data: tableListResponse, isLoading } = useGetTableList({
+    params: {
+      limit: pagination.limit,
+      page: pagination.page,
+    },
+  });
 
   const createTableMutation = useCreateTable({
     onSuccess: (res) => {
@@ -81,10 +89,12 @@ export default function TablesContent() {
     setDialogOpen(true);
   };
 
-  const openEditDialog = (table: Table) => {
+  const openEditDialog = (table: TableData) => {
     setEditingTable(table);
     setDialogOpen(true);
   };
+
+  const total = tableListResponse?.meta?.total ?? 0;
 
   const handleSubmit = (values: TableFormValues) => {
     const num = parseInt(values.number, 10);
@@ -106,7 +116,7 @@ export default function TablesContent() {
     deleteTableMutation.mutate({ path: { id: deleteConfirmId } });
   };
 
-  const handlePrint = (table: Table) => {
+  const handlePrint = (table: TableData) => {
     const url = table.qrCode;
     if (!url) return;
 
@@ -227,7 +237,9 @@ export default function TablesContent() {
               })}
               data={tables}
               loading={isLoading}
-              hidePagination
+              total={total}
+              pagination={pagination}
+              setPagination={setPagination}
               className="shadow-none border-none bg-transparent rounded-none"
             />
           </CardContent>
