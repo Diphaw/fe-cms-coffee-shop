@@ -11,7 +11,7 @@ Frontend client untuk dashboard pengelolaan Coffee Shop, dibangun dengan **Next.
 ## 🛠️ Tech Stack
 *   Next.js (App Router)
 *   TypeScript
-*   Tailwind CSS & Shadcn UI
+*   Tailwind CSS & Base UI
 *   TanStack Query (React Query) & Axios
 *   Pusher Client
 
