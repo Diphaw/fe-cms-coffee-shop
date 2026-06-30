@@ -15,3 +15,8 @@ export interface TableDialogProps {
   onSubmit: (values: TableFormValues) => void;
   submitting: boolean;
 }
+
+export type PaginationState = {
+  page: number;
+  limit: number;
+};

@@ -1,10 +1,18 @@
-import { ApiResult, BodyOnlyRequest, PathBodyRequest, PathOnlyRequest } from "@/api/configs/types";
+import {
+  ApiResult,
+  ApiResultWithPagination,
+  BodyOnlyRequest,
+  PathBodyRequest,
+  PathOnlyRequest,
+  ParamsOnlyRequest,
+} from "@/api/configs/types";
 
 // ===============================================
 // Type Request and Response Container
 // ===============================================
 
-export type GetTableListResponse = ApiResult<TableData[]>;
+export type GetTableListRequest = ParamsOnlyRequest<GetTableListParams>;
+export type GetTableListResponse = ApiResultWithPagination<TableData>;
 
 export type GetTableDetailRequest = PathOnlyRequest<{ id: string }>;
 export type GetTableDetailResponse = ApiResult<TableData>;
@@ -21,6 +29,12 @@ export type DeleteTableResponse = ApiResult<TableData>;
 // ===============================================
 // Type Definition Here
 // ===============================================
+
+export type GetTableListParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
 
 export type TableStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED";
 
