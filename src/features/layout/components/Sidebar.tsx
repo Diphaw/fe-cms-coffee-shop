@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Coffee } from "lucide-react";
-import { auth } from "@/lib/auth";
+import Cookies from "js-cookie";
 import { NAV_ITEMS } from "../constants";
 
 export function Sidebar() {
@@ -11,7 +11,7 @@ export function Sidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
-    auth.clearToken();
+    Cookies.remove("cms_token");
     router.push("/login");
   };
 

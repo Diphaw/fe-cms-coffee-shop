@@ -1,24 +1,53 @@
-import { ApiResult, BodyOnlyRequest, PathOnlyRequest, PathBodyRequest } from "@/api/configs/types";
-import { Table } from "@/types";
+import { ApiResult, BodyOnlyRequest, PathBodyRequest, PathOnlyRequest } from "@/api/configs/types";
 
-export type GetTableListResponse = ApiResult<Table[]>;
+// ===============================================
+// Type Request and Response Container
+// ===============================================
+
+export type GetTableListResponse = ApiResult<TableData[]>;
 
 export type GetTableDetailRequest = PathOnlyRequest<{ id: string }>;
-export type GetTableDetailResponse = ApiResult<Table>;
+export type GetTableDetailResponse = ApiResult<TableData>;
+
+export type CreateTableRequest = BodyOnlyRequest<CreateTableBody>;
+export type CreateTableResponse = ApiResult<TableData>;
+
+export type UpdateTableRequest = PathBodyRequest<{ id: string }, UpdateTableBody>;
+export type UpdateTableResponse = ApiResult<TableData>;
+
+export type DeleteTableRequest = PathOnlyRequest<{ id: string }>;
+export type DeleteTableResponse = ApiResult<TableData>;
+
+// ===============================================
+// Type Definition Here
+// ===============================================
+
+export type TableStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED";
 
 export type CreateTableBody = {
   number: number;
   capacity?: number;
 };
-export type CreateTableRequest = BodyOnlyRequest<CreateTableBody>;
-export type CreateTableResponse = ApiResult<Table>;
 
 export type UpdateTableBody = {
   number?: number;
   capacity?: number;
 };
-export type UpdateTableRequest = PathBodyRequest<{ id: string }, UpdateTableBody>;
-export type UpdateTableResponse = ApiResult<Table>;
 
-export type DeleteTableRequest = PathOnlyRequest<{ id: string }>;
-export type DeleteTableResponse = ApiResult<Table>;
+export type TableData = {
+  id: string;
+  number: number;
+  capacity: number;
+  status: TableStatus;
+  qrCode: string | null;
+  createdAt: string;
+  updatedAt: string;
+  orders?: OrderSummary[];
+};
+
+export type OrderSummary = {
+  id: string;
+  orderNumber: string;
+  status: string;
+  totalAmount: string;
+};

@@ -40,7 +40,8 @@ export function Badge({ children, variant = "gray" }: BadgeProps) {
 
 // ─── Domain-specific badge helpers ───────────────────────────────────────────
 
-import type { TableStatus, OrderStatus, PaymentStatus, OrderType } from "@/types";
+import type { TableStatus } from "@/api/domains/tables/types";
+import type { OrderStatus, PaymentStatus, OrderType } from "@/api/domains/orders/types";
 
 export function TableStatusBadge({ status }: { status: TableStatus }) {
   const map: Record<TableStatus, { variant: BadgeVariant; label: string }> = {

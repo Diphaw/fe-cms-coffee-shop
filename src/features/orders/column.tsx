@@ -4,19 +4,19 @@ import { ColumnDef } from "@tanstack/react-table";
 import { OrderStatusBadge, PaymentStatusBadge, OrderTypeBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play, CheckCircle2, Ban, Clock, MessageSquare, Eye } from "lucide-react";
-import type { Order, OrderStatus } from "@/types";
+import type { OrderData, OrderStatus } from "@/api/domains/orders/types";
 
 interface GetColumnsProps {
   activeFilter: "ACTIVE" | "PAST";
   onUpdateStatus: (id: string, status: OrderStatus) => void;
-  onViewDetail: (order: Order) => void;
+  onViewDetail: (order: OrderData) => void;
 }
 
 export function getColumns({
   activeFilter,
   onUpdateStatus,
   onViewDetail,
-}: GetColumnsProps): ColumnDef<Order>[] {
+}: GetColumnsProps): ColumnDef<OrderData>[] {
   return [
     {
       id: "orderNumber",

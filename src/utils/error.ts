@@ -30,7 +30,8 @@ function normalizeFieldErrors(raw: RawValidationErrors): Record<string, string[]
 
 /** Accepts any form with setError (e.g. react-hook-form) so caller does not need type assertion */
 type FormWithSetError = {
-  setError: (name: string, error: { type?: string; message: string }) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accept RHF's typed setError without cast
+  setError: (name: any, error: { type?: string; message: string }) => void;
 };
 
 /** Human-readable message for API rejects (plain objects), Error, or string */
@@ -45,7 +46,7 @@ export function getErrorMessage(error: unknown, defaultMessage = "Something went
 }
 
 /**
- * Parses API validation error response and applies field errors to the form.
+ * Parses API validation error response, applies field errors to the form.
  * Handles both formats: errors as array of objects or as Record<string, string[]>.
  *
  * @param form - Form instance with setError (e.g. from useForm)

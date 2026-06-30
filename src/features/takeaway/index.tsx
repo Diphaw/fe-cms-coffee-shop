@@ -9,7 +9,7 @@ import { EmptyState, DataTable, alert, TitleActions } from "@/components/block";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Plus, Loader2 } from "lucide-react";
-import type { OrderStatus, Order } from "@/types";
+import type { OrderStatus, OrderData } from "@/api/domains/orders/types";
 import { getErrorMessage } from "@/utils/error";
 import { cn } from "@/utils/classname";
 
@@ -18,7 +18,7 @@ import { ACTIVE_STATUSES } from "./constants";
 export default function TakeawayContent() {
   const [activeFilter, setActiveFilter] = useState<"ACTIVE" | "PAST">("ACTIVE");
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [detailOrder, setDetailOrder] = useState<Order | null>(null);
+  const [detailOrder, setDetailOrder] = useState<OrderData | null>(null);
 
   const { data: orderListResponse, isLoading } = useGetOrderList();
 
@@ -39,7 +39,7 @@ export default function TakeawayContent() {
 
   const orders = orderListResponse?.data ?? [];
 
-  const isActiveOrder = (order: Order) => ACTIVE_STATUSES.includes(order.status);
+  const isActiveOrder = (order: OrderData) => ACTIVE_STATUSES.includes(order.status);
 
   const filteredOrders = orders.filter((order) => {
     const matchesType = order.type === "TAKE_AWAY";

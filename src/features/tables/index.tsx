@@ -14,16 +14,16 @@ import { ConfirmDeleteModal, EmptyState, DataTable, alert, TitleActions } from "
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Table2, Loader2 } from "lucide-react";
-import type { Table } from "@/types";
+import type { TableData } from "@/api/domains/tables/types";
 import { getErrorMessage } from "@/utils/error";
 
 import type { TableFormValues } from "./schema";
 
 export default function TablesContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTable, setEditingTable] = useState<Table | null>(null);
+  const [editingTable, setEditingTable] = useState<TableData | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [detailTable, setDetailTable] = useState<Table | null>(null);
+  const [detailTable, setDetailTable] = useState<TableData | null>(null);
 
   const { data: tableListResponse, isLoading } = useGetTableList();
 
@@ -81,7 +81,7 @@ export default function TablesContent() {
     setDialogOpen(true);
   };
 
-  const openEditDialog = (table: Table) => {
+  const openEditDialog = (table: TableData) => {
     setEditingTable(table);
     setDialogOpen(true);
   };
@@ -106,7 +106,7 @@ export default function TablesContent() {
     deleteTableMutation.mutate({ path: { id: deleteConfirmId } });
   };
 
-  const handlePrint = (table: Table) => {
+  const handlePrint = (table: TableData) => {
     const url = table.qrCode;
     if (!url) return;
 

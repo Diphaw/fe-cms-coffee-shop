@@ -1,17 +1,17 @@
-import type { Table } from "@/types";
+import type { TableData } from "@/api/domains/tables/types";
 import type { TableFormValues } from "./schema";
 
 export interface TableCardProps {
-  table: Table;
-  onEdit: (table: Table) => void;
+  table: TableData;
+  onEdit: (table: TableData) => void;
   onDelete: (id: string) => void;
-  onPrint: (table: Table) => void;
+  onPrint: (table: TableData) => void;
 }
 
 export interface TableDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editingTable: Table | null;
+  editingTable: TableData | null;
   onSubmit: (values: TableFormValues) => void;
   submitting: boolean;
 }

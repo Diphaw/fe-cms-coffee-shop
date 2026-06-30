@@ -1,7 +1,7 @@
-import type { Order, OrderStatus } from "@/types";
+import type { OrderData, OrderStatus } from "@/api/domains/orders/types";
 
 export interface OrderCardProps {
-  order: Order;
+  order: OrderData;
   activeFilter: "ACTIVE" | "PAST";
   onUpdateStatus: (id: string, status: OrderStatus) => void;
 }

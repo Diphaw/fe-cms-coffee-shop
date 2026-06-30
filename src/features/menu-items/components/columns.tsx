@@ -6,15 +6,19 @@ import { CATEGORY_LABELS } from "../constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash, Utensils } from "lucide-react";
-import type { MenuItem } from "@/types";
+import type { MenuItemData } from "@/api/domains/menu/types";
 
 interface GetColumnsProps {
-  onEdit: (item: MenuItem) => void;
+  onEdit: (item: MenuItemData) => void;
   onDelete: (id: string) => void;
   onToggle: (id: string) => void;
 }
 
-export function getColumns({ onEdit, onDelete, onToggle }: GetColumnsProps): ColumnDef<MenuItem>[] {
+export function getColumns({
+  onEdit,
+  onDelete,
+  onToggle,
+}: GetColumnsProps): ColumnDef<MenuItemData>[] {
   return [
     {
       id: "detail",
