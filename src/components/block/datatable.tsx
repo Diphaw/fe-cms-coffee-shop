@@ -167,7 +167,7 @@ export default function DataTable<TData, TValue>({
   return (
     <div
       className={cn(
-        "flex w-full max-w-full min-w-0 flex-col rounded-xl bg-card border border-border shadow min-h-[550px]",
+        "flex w-full max-w-full min-w-0 flex-col rounded-xl bg-card border border-border shadow",
         className
       )}
     >
